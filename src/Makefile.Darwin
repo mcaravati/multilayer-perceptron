@@ -1,0 +1,22 @@
+CC=clang
+CFLAGS=-Wall -Wextra -Werror -g -DDEBUG 
+LDFLAGS=-lm
+BUILD_DIR="../build"
+
+all: create_build_dir build
+	$(BUILD_DIR)/main
+
+debug: create_build_dir build
+	leaks --atExit -- $(BUILD_DIR)/main
+
+create_build_dir:
+	mkdir -p $(BUILD_DIR)
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< 
+
+build: main.c datasets.o net.o activation_functions.o
+	$(CC) $(CFLAGS) -o $(BUILD_DIR)/main $^ $(LDFLAGS)
+
+clean:
+	rm *.o
